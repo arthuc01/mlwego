@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -11,16 +10,10 @@ from sklearn.datasets import load_breast_cancer
 from sklearn.model_selection import train_test_split
 
 
-def _handle_remove_readonly(func, path, exc_info) -> None:
-    del exc_info
-    os.chmod(path, 0o700)
-    func(path)
-
-
 def main() -> None:
     workspace = Path("demo_run")
     if workspace.exists():
-        shutil.rmtree(workspace, onerror=_handle_remove_readonly)
+        shutil.rmtree(workspace)
     data_dir = workspace / "data"
     data_dir.mkdir(parents=True)
     dataset = load_breast_cancer(as_frame=True)
