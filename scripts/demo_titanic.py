@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -10,10 +12,29 @@ from sklearn.datasets import load_breast_cancer
 from sklearn.model_selection import train_test_split
 
 
+def _handle_remove_readonly(func, path, exc_info) -> None:
+    del exc_info
+    os.chmod(path, 0o700)
+    func(path)
+
+
+def _safe_rmtree(path: Path, retries: int = 3, delay: float = 0.2) -> None:
+    for attempt in range(retries):
+        if not path.exists():
+            return
+        try:
+            shutil.rmtree(path, onerror=_handle_remove_readonly)
+            return
+        except PermissionError:
+            if attempt == retries - 1:
+                raise
+            time.sleep(delay)
+
+
 def main() -> None:
     workspace = Path("demo_run")
     if workspace.exists():
-        shutil.rmtree(workspace)
+        _safe_rmtree(workspace)
     data_dir = workspace / "data"
     data_dir.mkdir(parents=True)
     dataset = load_breast_cancer(as_frame=True)

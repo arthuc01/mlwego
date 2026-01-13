@@ -23,9 +23,17 @@ def evaluate_solution(run_dir: Path, timeout: int = TRAIN_TIMEOUT) -> EvalResult
     src_dir = run_dir / "src"
     train_script = src_dir / "train.py"
     result = run_python(train_script, cwd=src_dir, timeout=timeout)
+    if result.exit_code != 0:
+        raise RuntimeError(
+            "Training failed with exit code "
+            f"{result.exit_code}.\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
+        )
     metrics_path = run_dir / "artifacts" / "metrics.json"
     if not metrics_path.exists():
-        raise FileNotFoundError("metrics.json not found after training")
+        raise FileNotFoundError(
+            "metrics.json not found after training.\n"
+            f"STDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
+        )
     metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
     return EvalResult(
         score=float(metrics["score"]),
