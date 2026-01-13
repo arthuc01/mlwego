@@ -1,0 +1,24 @@
+[project]
+name = "mlwego"
+version = "0.1.0"
+description = "Local-first AI data science agent for ML tasks."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "mlwego contributors" }]
+dependencies = [
+  "numpy",
+  "pandas",
+  "scikit-learn",
+  "joblib",
+]
+
+[project.optional-dependencies]
+llm = ["requests"]
+
+[project.scripts]
+mlwego = "mlwego.ui.cli:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
