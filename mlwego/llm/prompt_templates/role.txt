@@ -1,0 +1,5 @@
+Task: {task_description}
+Data schema: {schema_summary}
+Recent runs:
+{run_summaries}
+Propose edits as tool calls and include expected impact.
