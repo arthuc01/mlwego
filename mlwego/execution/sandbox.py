@@ -27,7 +27,8 @@ def run_python(
     env: Optional[Dict[str, str]] = None,
 ) -> ExecutionResult:
     start = time.time()
-    cmd = ["python", str(script_path)]
+    resolved_script = script_path.resolve()
+    cmd = ["python", str(resolved_script)]
     merged_env = os.environ.copy()
     if env:
         merged_env.update(env)
